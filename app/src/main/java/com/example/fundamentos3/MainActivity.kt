@@ -19,24 +19,37 @@ class MainActivity : ComponentActivity() {
             Fundamentos3Theme {
                 // A surface container using the 'background' color from the theme
                 //De la forma que esta configurado la funcion, no se puede acceder a la variable
-                if(shouldShowOnboarding){
-                    OnboardingScreen()
-                }else{
-                    MyApp()
-                }
+                MyApp()
             }
         }
     }
 }
+//Creamos una nueva funcion llamada Greetings y pasaremos el contenido de Myapp a esta
 
 @Composable
-fun MyApp(names: List<String> = listOf("World", "Compose")) {
+fun MyApp() {
+    /*
+    if(shouldShowOnboarding){
+        OnboardingScreen()
+    }else{
+        Greetings()
+    }*/
+    //Creamos el state y lo compartimos entre los componentes
+    var shouldShowOnboarding by remember{ mutableStateOf(true)}
+    if(shouldShowOnboarding){
+        OnboardingScreen(onContinueClicked = {shouldShowOnboarding=false})
+    }else{
+        Greetings()
+    }
+}
+
+@Composable
+private fun Greetings(names:List<String> = listOf("World", "Compose")) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         for (name in names) {
             Greeting(name = name)
         }
-    }
-}
+    }}
 
 @Composable
 fun Greeting(name: String) {
@@ -68,9 +81,9 @@ fun Greeting(name: String) {
 
 //State hoisting
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(onContinueClicked:()->Unit) {
     //Haremos state hoisting
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
+    //var shouldShowOnboarding by remember { mutableStateOf(true) }
     Surface() {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -79,7 +92,7 @@ fun OnboardingScreen() {
         ) {
             Text("Bienvenido a fundamentos de Jetpack Compose")
             Button(
-                onClick = { shouldShowOnboarding = false },
+                onClick = onContinueClicked,
                 modifier = Modifier.padding(vertical = 24.dp)
             ) {
                 Text(text = "Continuar")
